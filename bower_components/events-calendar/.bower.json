@@ -1,0 +1,48 @@
+{
+  "name": "events-calendar",
+  "description": "An events calendar web components",
+  "version": "0.1.1",
+  "keywords": [
+    "calendar",
+    "datepicker",
+    "polymer",
+    "web-components"
+  ],
+  "license": "MIT",
+  "main": "events-calendar.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hispar/events-calendar.git"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.6.0",
+    "fa-awesome": "^2.0.1",
+    "moment": "^2.17.1",
+    "iron-collapse": "^v1.3.0",
+    "paper-dialog": "^1.1.0",
+    "paper-button": "^1.0.14"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "resolutions": {
+    "polymer": "^1.6.0",
+    "webcomponentsjs": "^0.7.0",
+    "paper-ripple": "^1.0.0",
+    "font-roboto": "^1.0.1"
+  },
+  "homepage": "https://github.com/Hispar/events-calendar",
+  "_release": "0.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.1",
+    "commit": "8da1809e64dc20d1da7edf67ae54595dc271afde"
+  },
+  "_source": "https://github.com/Hispar/events-calendar.git",
+  "_target": "^0.1.1",
+  "_originalSource": "Hispar/events-calendar",
+  "_direct": true
+}

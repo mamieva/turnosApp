@@ -1,0 +1,136 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/events-calendar/events-calendar.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<dom-module id="turnos-app">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+      
+      paper-button {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-weight: normal;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      paper-button.pink {
+        color: var(--paper-pink-a200);
+        --paper-button-ink-color: var(--paper-pink-a200);
+      }
+      
+      paper-button.pink:hover {
+        background-color: var(--paper-pink-100);
+      }
+      
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        }
+        ;
+      }
+      
+      paper-button.indigo:hover {
+        background-color: var(--paper-indigo-400);
+      }
+      
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+      
+      paper-button.green[active] {
+        background-color: var(--paper-red-500);
+      }
+      
+      paper-button.disabled {
+        color: white;
+      }
+    </style>
+    <h2>Gestor de Turnos</h2>
+    <paper-button toggles raised class="indigo" id="addTurno">Agregar Turno</paper-button>
+    <paper-button toggles raised class="green" id="addCliente">Agregar Cliente</paper-button>
+    <events-calendar id="calendar" day-labels='["Do","Lu","Ma","Mi","Ju","Vi","Sa"]' disable-prev-days show-days-in-month=35>
+    </events-calendar>
+    <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <span>holaaa dialog</span>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+
+      is: 'turnos-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'turnos-app',
+        },
+      },
+      listeners: {
+        'calendar.dateSelected': '_dateSelected',
+        'addCliente.tap':'_dateSelected',
+        'addTurno.tap':'_dateSelected',
+
+      },
+      ready: function () {
+        var calendar = document.querySelector('events-calendar');
+
+        calendar.eventList = {
+          '2017-06-01': [{
+              summary: '7-11 | S',
+              slot: '7:00-11:00',
+              name: 'Rocio',
+              category: 'Cortes',
+            },
+            {
+              summary: '11-15 | Santiago',
+              slot: '11:00-15:00',
+              name: 'Marco',
+              category: 'Masajes'
+            }
+          ],
+          '2017-05-31': [{
+              summary: '7-11 | S',
+              slot: '7:00-11:00',
+              name: '',
+              category: 'Carlos',
+            },
+            {
+              summary: '11-15 | Santiago',
+              slot: '11:00-15:00',
+              name: 'Marco',
+              category: 'Supervisor'
+            }
+          ],
+          '2017-06-02': [{
+            summary: '7-11 | S',
+            slot: '7:00-11:00',
+            name: '',
+            category: 'Supervisor'
+          }],
+          '2017-06-03': [{
+            summary: '7-11 | S',
+            slot: '7:00-11:00',
+            name: '',
+            category: 'Supervisor'
+          }],
+        };
+        this.$.calendar.addEventListener("date-selected", this._dateSelected.bind(this))
+      },
+      _dateSelected: function (e) {
+        console.log("dia", e.detail.date);
+        this.$.dialog.open();
+      }
+
+    });
+  </script>
+</dom-module>

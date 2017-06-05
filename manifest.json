@@ -1,0 +1,7 @@
+{
+  "name": "turnos_app",
+  "short_name": "turnos_app",
+  "description": "Turnos para peluqueria",
+  "start_url": "/",
+  "display": "standalone"
+}
