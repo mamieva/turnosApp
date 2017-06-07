@@ -8,6 +8,10 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
 <link rel="import" href="../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-time-picker/paper-time-picker.html">
 <script src="../../bower_components/sugar/dist/sugar.min.js"></script>
 <script src="../../bower_components/sugar/dist/locales/es.js"></script>
 <dom-module id="turnos-app">
@@ -61,26 +65,40 @@
       }
     </style>
     <h2>Gestor de Turnos</h2>
-    <paper-button toggles raised class="indigo" id="addTurno">Agregar Turno</paper-button>
+    <paper-button toggles raised class="indigo" id="openTurno">Agregar Turno</paper-button>
     <paper-button toggles raised class="green" id="addCliente">Agregar Cliente</paper-button>
     <events-calendar id="calendar" day-labels='["Do","Lu","Ma","Mi","Ju","Vi","Sa"]' disable-prev-days show-days-in-month=35>
     </events-calendar>
-    <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+    <paper-dialog id="dialogTurno" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <div class="contenedor">
         <vaadin-date-picker label="Fecha del Turno" id="fecha_turno">
         </vaadin-date-picker>
       </div>
-      <paper-input id="cost" name="cost" label="Costo" type="number" step="0.01" placeholder='0.00' required>
-        <div prefix>$</div>
+
+      <paper-input id="cost" name="cost" label="Costo" type="number" step="01.00" placeholder='00.00' required>
+        <div suffix>horas</div>
       </paper-input>
-      <paper-input id="profit" name="profit" label="Ganancia" type="number" required>
-        <div suffix>%</div>
-      </paper-input>
+      <paper-dropdown-menu label="Categoría">
+        <paper-listbox slot="dropdown-content" selected="1">
+          <paper-item>Corte</paper-item>
+          <paper-item>Color - Tintura</paper-item>
+          <paper-item>Masajes</paper-item>
+          <paper-item>Depilación</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancelar</paper-button>
-        <paper-button dialog-confirm autofocus id="addPriceList">Aceptar</paper-button>
+        <paper-button dialog-confirm autofocus id="addTurno">Aceptar</paper-button>
       </div>
     </paper-dialog>
+    <paper-dialog id="dialog" modal class="paper-time-picker-dialog" on-iron-overlay-closed="dismissDialog">
+      <paper-time-picker id="timePicker" time="[[time]]"></paper-time-picker>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+      <paper-time-picker id="timePicker" time="04:20pm"></paper-time-picker>
   </template>
   <script>
     Polymer({
@@ -92,16 +110,46 @@
           type: String,
           value: 'turnos-app',
         },
+        time: {
+          type: String
+        }
       },
       listeners: {
         'calendar.dateSelected': '_dateSelected',
         'addCliente.tap': '_dateSelected',
-        'addTurno.tap': '_dateSelected',
+        'openTurno.tap': '_dialogTurno',
 
       },
       ready: function () {
+        this.$.timePicker.style.display = 'none'
         Sugar.Date.setLocale('es');
-        this.$.fecha_turno.value = '6/7/2017';
+        let datepicker = this.$.fecha_turno;
+        datepicker.i18n = {
+          week: 'semana',
+          calendar: 'calendario',
+          clear: 'limpiar',
+          today: 'hoy',
+          cancel: 'cancelar',
+          firstDayOfWeek: 0,
+          monthNames: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'
+            .split('_'),
+          weekdays: 'domingo_lunes_martes_miercoles_jueves_viernes_sabado'.split('_'),
+          weekdaysShort: 'do_lu_ma_mi_ju_vi_sa'.split('_'),
+          formatDate: function (date) {
+            return Sugar.Date.format(date, '{short}');
+          },
+          formatTitle: function (monthName, fullYear) {
+            return monthName + ' ' + fullYear;
+          },
+          parseDate: function (dateString) {
+            var matches = datepicker.i18n.monthNames.filter(function (monthName) {
+              return monthName.toLowerCase().startsWith(dateString.trim().toLowerCase());
+            });
+            dateString = matches.length === 1 ? matches[0] : dateString;
+            // Parse the date
+            return Sugar.Date.create(dateString);
+          }
+        };
 
 
         var calendar = document.querySelector('events-calendar');
@@ -146,11 +194,15 @@
             category: 'Supervisor'
           }],
         };
-        this.$.calendar.addEventListener("date-selected", this._dateSelected.bind(this))
+        this.$.calendar.addEventListener("date-selected", this._dialogTurno.bind(this))
       },
-      _dateSelected: function (e) {
-        console.log("dia", e.detail.date);
-        this.$.dialog.open();
+      _dialogTurno: function (e) {
+        // console.log("dia", e.detail.date);
+        this.$.dialogTurno.open();
+        // this.$.dialog.open();
+        this.$.timePicker.style.display = 'inline-block'
+        this.$.timePicker.style.zindex = 9999;
+
       }
 
     });
