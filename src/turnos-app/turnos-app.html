@@ -5,29 +5,34 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<script src="../../bower_components/sugar/dist/sugar.min.js"></script>
+<script src="../../bower_components/sugar/dist/locales/es.js"></script>
 <dom-module id="turnos-app">
   <template>
     <style>
        :host {
         display: block;
       }
-      
+
       paper-button {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-weight: normal;
         font-size: 14px;
         -webkit-font-smoothing: antialiased;
       }
-      
+
       paper-button.pink {
         color: var(--paper-pink-a200);
         --paper-button-ink-color: var(--paper-pink-a200);
       }
-      
+
       paper-button.pink:hover {
         background-color: var(--paper-pink-100);
       }
-      
+
       paper-button.indigo {
         background-color: var(--paper-indigo-500);
         color: white;
@@ -37,20 +42,20 @@
         }
         ;
       }
-      
+
       paper-button.indigo:hover {
         background-color: var(--paper-indigo-400);
       }
-      
+
       paper-button.green {
         background-color: var(--paper-green-500);
         color: white;
       }
-      
+
       paper-button.green[active] {
         background-color: var(--paper-red-500);
       }
-      
+
       paper-button.disabled {
         color: white;
       }
@@ -61,7 +66,20 @@
     <events-calendar id="calendar" day-labels='["Do","Lu","Ma","Mi","Ju","Vi","Sa"]' disable-prev-days show-days-in-month=35>
     </events-calendar>
     <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <span>holaaa dialog</span>
+      <div class="contenedor">
+        <vaadin-date-picker label="Fecha del Turno" id="fecha_turno">
+        </vaadin-date-picker>
+      </div>
+      <paper-input id="cost" name="cost" label="Costo" type="number" step="0.01" placeholder='0.00' required>
+        <div prefix>$</div>
+      </paper-input>
+      <paper-input id="profit" name="profit" label="Ganancia" type="number" required>
+        <div suffix>%</div>
+      </paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancelar</paper-button>
+        <paper-button dialog-confirm autofocus id="addPriceList">Aceptar</paper-button>
+      </div>
     </paper-dialog>
   </template>
   <script>
@@ -77,11 +95,15 @@
       },
       listeners: {
         'calendar.dateSelected': '_dateSelected',
-        'addCliente.tap':'_dateSelected',
-        'addTurno.tap':'_dateSelected',
+        'addCliente.tap': '_dateSelected',
+        'addTurno.tap': '_dateSelected',
 
       },
       ready: function () {
+        Sugar.Date.setLocale('es');
+        this.$.fecha_turno.value = '6/7/2017';
+
+
         var calendar = document.querySelector('events-calendar');
 
         calendar.eventList = {
@@ -118,7 +140,7 @@
             category: 'Supervisor'
           }],
           '2017-06-03': [{
-            summary: '7-11 | S',
+            summary: '7-aaaa11 | S',
             slot: '7:00-11:00',
             name: '',
             category: 'Supervisor'
