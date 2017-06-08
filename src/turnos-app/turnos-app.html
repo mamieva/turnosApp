@@ -185,46 +185,46 @@
 
         var calendar = document.querySelector('events-calendar');
 
-        // this.eventList = {
-        //   '2017-06-01': [{
-        //       summary: '7-11 | S',
-        //       slot: '7:00-11:00',
-        //       name: 'Rocio',
-        //       category: 'Cortes',
-        //     },
-        //     {
-        //       summary: '11-15 | Santiago',
-        //       slot: '11:00-15:00',
-        //       name: 'Marco',
-        //       category: 'Masajes'
-        //     }
-        //   ],
-        //   '2017-05-31': [{
-        //       summary: '7-11 | S',
-        //       slot: '7:00-11:00',
-        //       name: '',
-        //       category: 'Carlos',
-        //     },
-        //     {
-        //       summary: '11-15 | Santiago',
-        //       slot: '11:00-15:00',
-        //       name: 'Marco',
-        //       category: 'Supervisor'
-        //     }
-        //   ],
-        //   '2017-06-02': [{
-        //     summary: '7-11 | S',
-        //     slot: '7:00-11:00',
-        //     name: '',
-        //     category: 'Supervisor'
-        //   }],
-        //   '2017-06-03': [{
-        //     summary: '7-aaaa11 | S',
-        //     slot: '7:00-11:00',
-        //     name: '',
-        //     category: 'Supervisor'
-        //   }],
-        // };
+        this.eventList = {
+          '2017-06-01': [{
+              summary: '7-11 | S',
+              slot: '7:00-11:00',
+              name: 'Rocio',
+              category: 'Cortes',
+            },
+            {
+              summary: '11-15 | Santiago',
+              slot: '11:00-15:00',
+              name: 'Marco',
+              category: 'Masajes'
+            }
+          ],
+          '2017-05-31': [{
+              summary: '7-11 | S',
+              slot: '7:00-11:00',
+              name: '',
+              category: 'Carlos',
+            },
+            {
+              summary: '11-15 | Santiago',
+              slot: '11:00-15:00',
+              name: 'Marco',
+              category: 'Supervisor'
+            }
+          ],
+          '2017-06-02': [{
+            summary: '7-11 | S',
+            slot: '7:00-11:00',
+            name: '',
+            category: 'Supervisor'
+          }],
+          '2017-06-03': [{
+            summary: '7-aaaa11 | S',
+            slot: '7:00-11:00',
+            name: '',
+            category: 'Supervisor'
+          }],
+        };
         // this.$.calendar.addEventListener("date-selected", this._dialogTurno.bind(this))
       },
       _dialogTurno: function (e) {
@@ -250,8 +250,11 @@
           list[fecha]= new Array;
         } 
         list[fecha].push(obj);
+
+        this.$.calendar.eventList = list;
         // this.$.calendar.eventList = list.eventList;
         console.log(JSON.stringify(this.$.calendar.eventList));
+        this.$.calendar._onEventListChange(list);
 
       }
 

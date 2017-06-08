@@ -125,7 +125,9 @@
                 monthLabels: {
                     type: Array,
                     value: function () {
-                        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+                            'September', 'October', 'November', 'December'
+                        ];
                     }
                 },
 
@@ -162,7 +164,10 @@
                 // Events list by day
                 eventList: {
                     type: Object,
-                    value: {},
+                    value: function () {
+                        return {};
+                    },
+                    reflectToAttribute: true,
                     observer: '_onEventListChange'
                 }
             },
@@ -182,9 +187,13 @@
              *   @event nextMonth
              *   @detail
              **/
-            _onEventListChange: function(value){
-                if(value){
+            // observers: [
+            //     '_onEventListChange(eventList["2017-06-06"])'
+            // ],
+            _onEventListChange: function (value) {
+                if (value) {
                     this._makeCalendar(this.showDate.year, this.showDate.month);
+                console.log('calendario');
                 }
             },
 
@@ -226,8 +235,7 @@
                 }
                 if (e == "" || e == null) {
                     this.chosen = "";
-                }
-                else {
+                } else {
                     this.chosen = e;
 
                     var days = Polymer.dom(this.$.mpCalendar).querySelectorAll('.day');
@@ -243,7 +251,8 @@
             // Move to the previous month.
             prevMonthHandler: function () {
                 this.set('showDate.month', this.showDate.month <= 0 ? 11 : this.showDate.month - 1);
-                this.set('showDate.year', this.showDate.month == 11 ? this.showDate.year - 1 : this.showDate.year);
+                this.set('showDate.year', this.showDate.month == 11 ? this.showDate.year - 1 : this.showDate
+                    .year);
                 this.chosen = "";
 
                 this.notifyPath('date.year', this.showDate.year);
@@ -256,7 +265,8 @@
             // Move to the next month.
             nextMonthHandler: function () {
                 this.set('showDate.month', this.showDate.month == 11 ? 0 : this.showDate.month + 1);
-                this.set('showDate.year', this.showDate.month <= 0 ? this.showDate.year + 1 : this.showDate.year);
+                this.set('showDate.year', this.showDate.month <= 0 ? this.showDate.year + 1 : this.showDate
+                    .year);
                 this.chosen = "";
 
                 this.notifyPath('date.year', this.showDate.year);
@@ -313,7 +323,7 @@
                     day: today.getDate(),
                     month: today.getMonth() + 1,
                     year: today.getFullYear()
-//                    isoDate: dataDate
+                    //                    isoDate: dataDate
                 };
 
                 this._makeCalendar(this.showDate.year, this.showDate.month);
@@ -356,16 +366,14 @@
                 if (month === 0) {
                     previousMonth = 11;
                     var previousYear = year - 1;
-                }
-                else {
+                } else {
                     previousMonth = month - 1;
                     previousYear = year
                 }
                 if (month === 11) {
                     nextMonth = 0;
                     var nextYear = year + 1;
-                }
-                else {
+                } else {
                     nextMonth = month + 1;
                     nextYear = year;
                 }
@@ -374,8 +382,7 @@
                 var previousMonthDays;
                 if (month === 0) {
                     previousMonthDays = self._numberOfDays(year, 12);
-                }
-                else {
+                } else {
                     previousMonthDays = self._numberOfDays(year, month);
                 }
                 var currentMonthDays = self._numberOfDays(year, month + 1);
@@ -394,9 +401,10 @@
                     if (i % 7 === 0) {
                         var week = document.createElement('div');
                         week.addEventListener('date-selected', function (event) {
-                            var days = this.querySelectorAll('events-calendar-day').forEach(function (day) {
-                                day.open = !day.open;
-                            })
+                            var days = this.querySelectorAll('events-calendar-day').forEach(
+                                function (day) {
+                                    day.open = !day.open;
+                                })
                         });
                         week.className += "events-cld-week";
                         week.setAttribute("week", i / 7);
@@ -406,10 +414,9 @@
                         day.className += "events-cld-day prevMonth";
 
                         day.disabled = self.disablePrevDays;
-                        day.date = moment().year(previousYear).month(previousMonth).date((previousMonthDays - dayOfMonthStart) + (i + 1 + self.firstDayOfWeek)).format();
-                    }
-
-                    else if (dayN <= currentMonthDays) {
+                        day.date = moment().year(previousYear).month(previousMonth).date((previousMonthDays -
+                            dayOfMonthStart) + (i + 1 + self.firstDayOfWeek)).format();
+                    } else if (dayN <= currentMonthDays) {
                         day.className += "events-cld-day currMonth";
                         day.date = moment().year(year).month(currentMonth).date(dayN++).format();
 
@@ -418,12 +425,11 @@
                             day.className += " today";
                         }
                         // If selected
-                        if ((dayN - 1) == this.date.day && month == this.date.month - 1 && year == this.date.year) {
+                        if ((dayN - 1) == this.date.day && month == this.date.month - 1 && year == this.date
+                            .year) {
                             day.className += " selected";
                         }
-                    }
-
-                    else {
+                    } else {
                         day.className += "events-cld-day nextMonth";
                         day.disabled = true;
                         day.date = moment().year(nextYear).month(nextMonth).date(dayOfNextMonth++).format();
@@ -432,6 +438,7 @@
                     days.appendChild(week);
                     if (this.eventList[day.formattedDate] !== undefined) {
                         day.eventList = this.eventList[day.formattedDate];
+                        console.log(day,day.eventList);
                     }
                     week.appendChild(day);
                 }
