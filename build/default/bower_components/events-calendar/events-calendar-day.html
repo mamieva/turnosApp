@@ -1,0 +1,116 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../fa-awesome/fa-awesome.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="events-calendar-event.html">
+
+<dom-module id="events-calendar-day">
+    <template>
+        <h4>{{ day }} <template is="dom-if" if="[[_hasCounter(eventList)]]"><span class="dayscounter">([[_getCounter(eventList)]])</span></template></h4>
+        <iron-collapse class="event-collapse" id="collapse" opened="[[open]]">
+            <template is="dom-repeat" items="[[eventList]]">
+                <events-calendar-event date="{{ date }}" slot="{{ item.slot }}" description="{{ item.name }}" category="{{ item.category }}" summary="{{ item.summary }}" status="[[_getAssigned(item)]]"></events-calendar-event>
+            </template>
+        </iron-collapse>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'events-calendar-day',
+
+            properties: {
+
+                // Collapse day
+                open: {
+                    type: Boolean,
+                    value: false
+                },
+
+                // Events list by day
+                eventList: {
+                    type: Array,
+                    value: []
+                },
+
+                /**
+                 * The current date.
+                 */
+                date: {
+                    type: String,
+                    value: function () {
+                        return moment().format();
+                    },
+                    reflectToAttribute: true
+                },
+
+                /**
+                 * Formatted date.
+                 */
+                formattedDate: {
+                    type: String,
+                    computed: '_getFormattedDate(date)'
+                },
+
+                year: {
+                    type: String,
+                    computed: '_getYear(date)'
+                },
+                day: {
+                    type: String,
+                    computed: '_getDay(date)'
+                },
+
+                disabled: {
+                    type: Boolean,
+                    value: false,
+                    reflectToAttribute: true
+                }
+            },
+
+            listeners: {
+                'tap': '_onDayClicked'
+            },
+
+            _onDayClicked: function () {
+                this.fire('date-selected', {
+                    date: this.date
+                });
+            },
+
+            _getFormattedDate: function (date) {
+                date = moment(date);
+                return date.format('YYYY-MM-DD');
+            },
+
+            _getYear: function (date) {
+                date = moment(date);
+                return date.format('YYYY');
+            },
+
+            _getDay: function (date) {
+                date = moment(date);
+                return date.format('DD');
+            },
+
+            _getAssigned: function (item) {
+                if (item.name === '') {
+                    return 'pending';
+                }
+                return 'assigned';
+            },
+
+            _hasCounter: function (eventList) {
+                if (!this.open && eventList.length > 0) {
+                    return true;
+                }
+                return false;
+            },
+
+            _getCounter: function (eventList) {
+                if (!this.open && eventList.length > 0) {
+                    return eventList.length;
+                }
+                return "";
+            }
+        });
+    </script>
+</dom-module>

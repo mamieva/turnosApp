@@ -12,12 +12,16 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-time-picker/paper-time-picker.html">
+<link rel="import" href="../../bower_components/paper-time-input/paper-time-input.html">
 <link rel="import" href="../../bower_components/paper-date-picker-item/paper-date-picker-item.html">
 <link rel="import" href="../../bower_components/paper-date-picker-item/paper-datetime-picker-item.html">
+<link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
+<link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<script src="../../bower_components/moment/min/locales.js"></script>
+<script src="../../bower_components/moment/min/moment.min.js"></script>
 <script src="../../bower_components/sugar/dist/sugar.min.js"></script>
 <script src="../../bower_components/sugar/dist/locales/es.js"></script>
+<script src="../../bower_components/moment/locale/es.js"></script>
 <dom-module id="turnos-app">
   <template>
     <style>
@@ -71,57 +75,110 @@
       .container {
         text-align: center;
       }
+      /* paper-dialog{
+        width: 100%
+      } */
+
+      .datepicker {
+        width: 50%;
+      }
+      paper-time-input {
+        display: inline-block;
+        width: 100px;
+      }
     </style>
-    <h2>Gestor de Turnos</h2>
-    <paper-button toggles raised class="indigo" id="openTurno">Agregar Turno</paper-button>
-    <paper-button toggles raised class="green" id="addCliente">Agregar Cliente</paper-button>
-    <events-calendar id="calendar" day-labels='["Do","Lu","Ma","Mi","Ju","Vi","Sa"]' show-days-in-month=35 event-list={{eventList}}>
-    </events-calendar>
-    <paper-dialog id="dialogTurno" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <!--<div class="contenedor">
-        <vaadin-date-picker label="Fecha del Turno" id="fecha_turno">
-        </vaadin-date-picker>
-      </div>-->
-      <div class="container">
-        <paper-datetime-picker-item id="datetime" icon="icons:today" placeholder="Fecha y hora del turno" date-format='LL' time-format="LT a"
-          locale="es"></paper-datetime-picker-item>
 
-        <paper-dropdown-menu label="Categoría" id="categoria">
-          <paper-listbox slot="dropdown-content" selected="1">
-            <paper-item>Corte</paper-item>
-            <paper-item>Color - Tintura</paper-item>
-            <paper-item>Masajes</paper-item>
-            <paper-item>Depilación</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
+    <body>
 
-        <paper-dropdown-menu label="Profesional" id="profesional">
-          <paper-listbox slot="dropdown-content" selected="1">
-            <paper-item>Laura</paper-item>
-            <paper-item>Cristian</paper-item>
-            <paper-item>Juan</paper-item>
-            <paper-item>Titi</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
+      <!-- <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{subRoute}}">
+      </app-route> -->
 
-        <paper-dropdown-menu label="Cliente" id="cliente">
-          <paper-listbox slot="dropdown-content" selected="1">
-            <paper-item>Sra. Lopez - </paper-item>
-            <paper-item>Sr. Amieva</paper-item>
-            <paper-item>Sra. Preda</paper-item>
-            <paper-item>Sra. Lucero</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </div>
+      <h2>Gestor de Turnos</h2>
+      <paper-button toggles raised class="indigo" id="openTurno">Agregar Turno</paper-button>
+      <paper-button toggles raised class="green" id="openCliente">Agregar Cliente</paper-button>
+      <events-calendar id="calendar" day-labels='["Do","Lu","Ma","Mi","Ju","Vi","Sa"]' show-days-in-month=35>
+      </events-calendar>
+      <paper-dialog id="dialogTurno" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+        <div class="container">
+          
+          <vaadin-date-picker label="Fecha del Turno" id="fecha_turno">
+          </vaadin-date-picker>
 
-      <!--<paper-input id="cost" name="cost" label="Costo" type="number" step="01.00" placeholder='00.00' required>
-        <div suffix>horas</div>
-      </paper-input>-->
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancelar</paper-button>
-        <paper-button dialog-confirm autofocus id="addTurno">Agregar</paper-button>
-      </div>
-    </paper-dialog>
+          <paper-time-input hour="3" min="20" format="12" am-pm="PM" label="Hora del Turno"></paper-time-input>
+
+          <paper-dropdown-menu label="Categoría" id="categoria">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Corte</paper-item>
+              <paper-item>Color - Tintura</paper-item>
+              <paper-item>Masajes</paper-item>
+              <paper-item>Depilación</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-dropdown-menu label="Profesional" id="profesional">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Laura</paper-item>
+              <paper-item>Cristian</paper-item>
+              <paper-item>Juan</paper-item>
+              <paper-item>Titi</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-dropdown-menu label="Cliente" id="cliente">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Sra. Lopez - </paper-item>
+              <paper-item>Sr. Amieva</paper-item>
+              <paper-item>Sra. Preda</paper-item>
+              <paper-item>Sra. Lucero</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancelar</paper-button>
+          <paper-button dialog-confirm autofocus id="addTurno">Agregar</paper-button>
+        </div>
+      </paper-dialog>
+      <paper-dialog id="dialogCliente" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+
+        <div class="container">
+          <paper-datetime-picker-item id="datetime" icon="icons:today" placeholder="Fecha y hora del turno" date-format='LL' time-format="LT a"
+            locale="es"></paper-datetime-picker-item>
+
+          <paper-input></paper-input>
+
+          <paper-dropdown-menu label="Categoría" id="categoria">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Corte</paper-item>
+              <paper-item>Color - Tintura</paper-item>
+              <paper-item>Masajes</paper-item>
+              <paper-item>Depilación</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-dropdown-menu label="Profesional" id="profesional">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Laura</paper-item>
+              <paper-item>Cristian</paper-item>
+              <paper-item>Juan</paper-item>
+              <paper-item>Titi</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-dropdown-menu label="Cliente" id="cliente">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <paper-item>Sra. Lopez - </paper-item>
+              <paper-item>Sr. Amieva</paper-item>
+              <paper-item>Sra. Preda</paper-item>
+              <paper-item>Sra. Lucero</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancelar</paper-button>
+          <paper-button dialog-confirm autofocus id="addCliente">Agregar</paper-button>
+        </div>
+      </paper-dialog>
+    </body>
   </template>
   <script>
     Polymer({
@@ -136,108 +193,96 @@
         time: {
           type: String
         },
-        eventList:{
+        eventList: {
           type: Object,
           value: {}
+        },
+        date: {
+          type: String
         }
       },
       listeners: {
         // 'calendar.dateSelected': '_dateSelected',
         'addCliente.tap': '_dateSelected',
         'openTurno.tap': '_dialogTurno',
-        'addTurno.tap': '_addTurno'
+        'openCliente.tap': '_dialogCliente',
+        'addTurno.tap': '_addTurno',
+        'addCliente.tap': '_addCliente'
 
       },
+      _date: function (value) {
+        console.log(value)
+
+      },
+      _updateDatepickerWoButtons: function () {
+        this.$.common.enforceDateChange();
+      },
+      _onSelectedDateChanged: function (ev) {
+        let really = this
+        var _value = ev.detail.value;
+        window.setTimeout(function () {
+          really.$.eInput.updateValueAndPreserveCaret(_value);
+        }, 1500);
+      },
       ready: function () {
+        // Set locale
+        moment.locale('es');
+        // set vaadin
+        this.querySelector('vaadin-date-picker').i18n = {
+          monthNames: moment.months(),
+          weekdays: moment.weekdays(),
+          weekdaysShort: moment.weekdaysShort(),
+          firstDayOfWeek: moment.localeData().firstDayOfWeek(0),
+          week: 'Semana',
+          calendar: 'Calendario',
+          clear: 'Limpiar',
+          today: 'Hoy',
+          cancel: 'Cancelar',
+          formatDate: function (d) {
+            return moment(d).format(moment.localeData().longDateFormat('L'));
+          },
+          parseDate: function (s) {
+            return moment(s, moment.localeData().longDateFormat('L')).toDate();
+          },
+          formatTitle: function (monthName, fullYear) {
+            return monthName + ' ' + fullYear;
+          }
+        };
+        //
         this.$.datetime.cancelButton = 'Cancelar'
         this.$.datetime.okButton = 'Aceptar'
-
-        // this.$.timePicker.style.display = 'none'
-        // Sugar.Date.setLocale('es');
-        // let datepicker = this.$.fecha_turno;
-        // datepicker.i18n = {
-        //   week: 'semana',
-        //   calendar: 'calendario',
-        //   clear: 'limpiar',
-        //   today: 'hoy',
-        //   cancel: 'cancelar',
-        //   firstDayOfWeek: 0,
-        //   monthNames: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'
-        //     .split('_'),
-        //   weekdays: 'domingo_lunes_martes_miercoles_jueves_viernes_sabado'.split('_'),
-        //   weekdaysShort: 'do_lu_ma_mi_ju_vi_sa'.split('_'),
-        //   formatDate: function (date) {
-        //     return Sugar.Date.format(date, '{short}');
-        //   },
-        //   formatTitle: function (monthName, fullYear) {
-        //     return monthName + ' ' + fullYear;
-        //   },
-        //   parseDate: function (dateString) {
-        //     var matches = datepicker.i18n.monthNames.filter(function (monthName) {
-        //       return monthName.toLowerCase().startsWith(dateString.trim().toLowerCase());
-        //     });
-        //     dateString = matches.length === 1 ? matches[0] : dateString;
-        //     // Parse the date
-        //     return Sugar.Date.create(dateString);
-        //   }
-        // };
-
-
-        var calendar = document.querySelector('events-calendar');
-
-        this.eventList = {
-          '2017-06-01': [{
-              summary: '7-11 | S',
-              slot: '7:00-11:00',
-              name: 'Rocio',
-              category: 'Cortes',
-            },
-            {
-              summary: '11-15 | Santiago',
-              slot: '11:00-15:00',
-              name: 'Marco',
-              category: 'Masajes'
-            }
-          ],
-          '2017-05-31': [{
-              summary: '7-11 | S',
-              slot: '7:00-11:00',
-              name: '',
-              category: 'Carlos',
-            },
-            {
-              summary: '11-15 | Santiago',
-              slot: '11:00-15:00',
-              name: 'Marco',
-              category: 'Supervisor'
-            }
-          ],
-          '2017-06-02': [{
-            summary: '7-11 | S',
-            slot: '7:00-11:00',
-            name: '',
-            category: 'Supervisor'
-          }],
-          '2017-06-03': [{
-            summary: '7-aaaa11 | S',
-            slot: '7:00-11:00',
-            name: '',
-            category: 'Supervisor'
-          }],
-        };
         // this.$.calendar.addEventListener("date-selected", this._dialogTurno.bind(this))
       },
       _dialogTurno: function (e) {
-        // console.log("dia", e.detail.date);
         this.$.dialogTurno.open();
-        // this.$.dialog.open();
-        // this.$.timePicker.style.display = 'inline-block'
-        // this.$.timePicker.style.margin = 0;
-        // this.$.timePicker.style.position = 'absolute'
-        // this.$.timePicker.style.zIndex = 9999;
+      },
+      _dialogCliente: function (e) {
+        this.$.dialogCliente.open();
+      },
+      _addTurno: function () {
+        // this.$.common.enforceDateChange();
+        let fecha = this.$.fecha_turno.value;
+        console.log(this.$.fecha_turno.value)
+        let list = this.eventList;
+        let obj = {};
+        obj.category = this.$.categoria.value;
+        obj.name = this.$.profesional.value;
+        obj.summary = this.$.cliente.value;
+        obj.slot = moment(fecha).format('L');
+
+        if (!list[fecha]) {
+          list[fecha] = new Array;
+        }
+        list[fecha].push(obj);
+        console.log(list[fecha])
+
+        this.$.calendar.eventList = {}
+        this.$.calendar._onEventListChange({})
+        this.$.calendar.eventList = JSON.parse(JSON.stringify(list));
+        console.log(JSON.stringify(this.$.calendar.eventList));
 
       },
-      _addTurno: function(){
+      _addCliente: function () {
         let fecha = moment(this.$.datetime.date).format('YYYY-MM-DD').toString();
         let list = this.eventList;
         let obj = {};
@@ -246,16 +291,16 @@
         obj.summary = this.$.cliente.value;
         obj.slot = moment(this.$.datetime.date).format('LT');
 
-        if(!list[fecha]){
-          list[fecha]= new Array;
-        } 
+        if (!list[fecha]) {
+          list[fecha] = new Array;
+        }
         list[fecha].push(obj);
+        console.log(list[fecha])
 
-        this.$.calendar.eventList = list;
-        // this.$.calendar.eventList = list.eventList;
+        this.$.calendar.eventList = {}
+        this.$.calendar._onEventListChange({})
+        this.$.calendar.eventList = JSON.parse(JSON.stringify(list));
         console.log(JSON.stringify(this.$.calendar.eventList));
-        this.$.calendar._onEventListChange(list);
-
       }
 
     });

@@ -1,7 +1,7 @@
 {
   "name": "events-calendar",
   "description": "An events calendar web components",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": [
     "calendar",
     "datepicker",
@@ -35,14 +35,13 @@
     "font-roboto": "^1.0.1"
   },
   "homepage": "https://github.com/Hispar/events-calendar",
-  "_release": "0.1.1",
+  "_release": "0.1.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.1",
-    "commit": "8da1809e64dc20d1da7edf67ae54595dc271afde"
+    "tag": "v0.1.2",
+    "commit": "69ff388f0549ec35b26655e301f892dee12c8b85"
   },
   "_source": "https://github.com/Hispar/events-calendar.git",
-  "_target": "^0.1.1",
-  "_originalSource": "Hispar/events-calendar",
-  "_direct": true
+  "_target": "^0.1.2",
+  "_originalSource": "Hispar/events-calendar"
 }
