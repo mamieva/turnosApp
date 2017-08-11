@@ -1,0 +1,189 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-box/app-box.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="./url-services-behavior.html">
+<dom-module id="clientes-form">
+    <template>
+        <style is="custom-style">
+            body {
+                margin: 0;
+                font-family: 'Roboto', 'Noto', sans-serif;
+                background-color: #eee;
+            }
+
+            #container {
+                margin: 10px;
+                padding: 10px;
+                /* display: flex; */
+            }
+
+            paper-button {
+                font-family: 'Roboto', 'Noto', sans-serif;
+                font-weight: normal;
+                font-size: 14px;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            paper-button.pink {
+                color: var(--paper-pink-a200);
+                --paper-button-ink-color: var(--paper-pink-a200);
+            }
+
+            paper-button.pink:hover {
+                background-color: var(--paper-pink-100);
+            }
+
+            paper-button.indigo {
+                background-color: var(--paper-indigo-500);
+                color: white;
+                --paper-button-raised-keyboard-focus: {
+                    background-color: var(--paper-pink-a200) !important;
+                    color: white !important;
+                }
+                ;
+            }
+
+            paper-button.indigo:hover {
+                background-color: var(--paper-indigo-400);
+            }
+
+            paper-button.green {
+                background-color: var(--paper-green-500);
+                color: white;
+            }
+
+            paper-button.green[active] {
+                background-color: var(--paper-red-500);
+            }
+
+            paper-button.disabled {
+                color: white;
+            }
+
+            #clientesButtons {
+                margin-top: 10px;
+                text-align: right;
+            }
+        </style>
+
+        <body>
+            <div id="container">
+                <paper-input id="nombre" name="nombre" label="Nombres"></paper-input>
+                <paper-input id="apellido" name="apellido" label="Apellido"></paper-input>
+                <paper-input id="email" name="email" label="Email"></paper-input>
+                <paper-input id="telefono" name="telefono" label="Telefono"></paper-input>
+                <paper-input id="direccion" name="direccion" label="Dirección"></paper-input>
+                <div id="clientesButtons">
+                    <paper-button toggles raised class="indigo" id="cancelCliente">Cancelar</paper-button>
+                    <paper-button toggles raised class="green" id="addCliente">Aceptar</paper-button>
+                </div>
+
+
+            </div>
+        </body>
+    </template>
+    <script>
+        Polymer({
+            is: 'clientes-form',
+            properties: {
+                pressed: {
+                    type: Boolean
+                },
+                route: {
+                    type: Object
+                },
+                token: {
+                    type: String
+                }
+            },
+            behaviors: [URLServiceBehaviors.URLService],
+            listeners: {
+                'addCliente.tap': '_addCliente'
+                // 'close.tap': '_backMenu'
+                // 'calendario.active-changed': '_activeItem',
+                // 'calendario.tap': '_Calendario'
+            },
+            observers: [
+                'viewChanged(route.path)'
+            ],
+            ready: function () {
+                var drawerLayout = document.getElementById('drawerLayout');
+                // toggle.addEventListener('click', function () {
+                //     if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+                //         drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+                //     } else {
+                //         drawerLayout.drawer.toggle();
+                //     }
+                // });
+            },
+            _activeItem: function (value) {
+                console.log("object", value);
+            },
+            _alendario: function () {
+                this.set("route.path", "/menu")
+                alert("aaa");
+            },
+            viewChanged: function (value) {
+                if (typeof window.localStorage.session !== "undefined") {
+                    this.token = JSON.parse(window.localStorage.session).token;
+                }
+                console.log(this.token)
+            },
+            _backMenu: function () {
+                this.set('route.path', '/none');
+            },
+            _addCliente: function () {
+                let cliente = {};
+                cliente.nombres = this.$.nombre.value;
+                cliente.apellido = this.$.apellido.value;
+                cliente.email = this.$.email.value;
+                cliente.telefono = this.$.telefono.value;
+                cliente.direccion = this.$.direccion.value;
+                cliente.access_token = this.token;
+                //
+                let myHeaders = new Headers({
+                    'Content-type': 'application/json'
+                });
+                let body = {
+                    access_token: 'sLNFbyjirHK3S6tptg5Wppt7tQbLdBQB'
+                };
+                let myInit = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: JSON.stringify(cliente),
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                let myUrl = this.url_base + 'clientes';
+                let myRequest = new Request(myUrl, myInit);
+                fetch(myRequest)
+                    .then(function (response) {
+                        console.log(response);
+                        return response;
+                    })
+                    .then(function (result) {
+                        console.log(result);
+                    })
+            }
+
+        });
+    </script>
+</dom-module>
