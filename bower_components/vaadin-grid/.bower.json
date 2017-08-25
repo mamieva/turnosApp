@@ -24,7 +24,7 @@
     "**/java",
     "**/tasks",
     "gulpfile.js",
-    "package.json",
+    "package-lock.json",
     "wct.conf.js"
   ],
   "devDependencies": {
@@ -68,14 +68,15 @@
     }
   },
   "homepage": "https://github.com/vaadin/vaadin-grid",
-  "version": "3.0.0",
-  "_release": "3.0.0",
+  "version": "3.0.1",
+  "_release": "3.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "v3.0.0",
-    "commit": "61eb02c4378d936df486aeef9b0e8f51c9869245"
+    "tag": "v3.0.1",
+    "commit": "08f10156285cab7be6b167f358451e4bdc3fa5e6"
   },
   "_source": "https://github.com/vaadin/vaadin-grid.git",
-  "_target": "^3.0.0",
-  "_originalSource": "vaadin/vaadin-grid"
+  "_target": "^3.0.1",
+  "_originalSource": "vaadin/vaadin-grid",
+  "_direct": true
 }

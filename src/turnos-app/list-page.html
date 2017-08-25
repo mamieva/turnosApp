@@ -1,0 +1,248 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="./shared-style.html">
+<link rel="import" href="./url-services-behavior.html">
+<link rel="import" href="./calendario-app.html">
+<link rel="import" href="./clientes-form.html">
+<link rel="import" href="./categorias-form.html">
+<link rel="import" href="./profesionales-form.html">
+
+<dom-module id="list-page">
+    <template>
+        <style include="shared-style"></style>
+        <style>
+            a {
+                color: #FF8A80;
+                cursor: pointer;
+            }
+            /*#toastError {
+            --paper-toast-background-color: #f63d33;
+            --paper-toast-color: white;
+        }*/
+
+            app-toolbar {
+                background-color: #4285f4;
+                color: #fff;
+            }
+        </style>
+        <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+        <app-route route="{{route}}" pattern="/:key" data="{{pageData}}" tail="{{subRoute}}">
+        </app-route>
+        <neon-animated-pages id="neon_pages" selected="0">
+            <div id="divList">
+                <paper-button id="_addNew" class="pink">Agregar nuevo </paper-button>
+                <vaadin-grid id="itemsList" items=[[items]] active-item="{{selectedItems}}" page-size="5">
+                    <template is="dom-repeat" items="[[columns]]" as="column">
+                        <vaadin-grid-column>
+                            <template class="header">[[column]]</template>
+                            <template class="cell">[[get(column, item)]]</template>
+                        </vaadin-grid-column>
+                    </template>
+                </vaadin-grid>
+                <div id="pages">
+                    <button on-tap="_prev">&lt;</button>
+                    <template is="dom-repeat" items="[[pages]]">
+                        <button on-tap="_select" selected$="[[_isSelected(grid_page, item)]]">[[item]]</button>
+                    </template>
+                    <button on-tap="_next">&gt;</button>
+                </div>
+            </div>
+            <div>
+                <iron-lazy-pages attr-for-selected="name" selected="{{data}}" selected-attribute="selected">
+                    <calendario-app name="calendario" route="{{subRoute}}"></calendario-app>
+                    <clientes-form name="clientes" route="{{subRoute}}"></clientes-form>
+                    <profesionales-form name="profesionales" route="{{subRoute}}"></profesionales-form>
+                    <categorias-form name="categorias" route="{{subRoute}}"></categorias-form>
+                </iron-lazy-pages>
+            </div>
+        </neon-animated-pages>
+    </template>
+    <script>
+        Polymer({
+            is: "list-page",
+            properties: {
+                data: {
+                    type: String
+                },
+                item: {
+                    type: Object,
+                },
+                lastLogin: {
+                    type: String,
+                    value: ""
+                },
+                session: {
+                    type: Object
+                },
+                items: {
+                    type: Array
+                },
+                columns: {
+                    type: Array
+                },
+                grid_page: {
+                    type: Number
+                },
+                pages: {
+                    type: Array
+                },
+                selectedItems: {
+                    observer: "_selectedItemChanged"
+                },
+                route: {
+                    type: Object
+                },
+                data: {
+                    type: String
+                }
+            },
+            behaviors: [URLServiceBehaviors.URLService],
+            observers: [
+                'viewChanged(route.path)'
+            ],
+            listeners: {
+                '_addNew.tap': '_addNew',
+            },
+            _addNew: function(){
+                this.set('route.path','/');
+            },
+            viewChanged: function (path) {
+                console.log(path);
+                if (typeof window.localStorage.session !== "undefined") {
+                    this.token = JSON.parse(window.localStorage.session).token;
+                }
+                if (path == '' && this.data != 'calendario') {
+                    this.$.neon_pages.selected = 0;
+                    this._getData(this.data);
+                } else {
+                    this.$.neon_pages.selected = 1;
+                }
+
+            },
+            _getData: function (data) {
+                let reallythis = this;
+                let myHeaders = new Headers({
+                    'Content-type': 'application/json'
+                });
+                let myInit = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                let myUrl = this.url_base + data + '?access_token=' + this.token;
+                let myRequest = new Request(myUrl, myInit);
+                fetch(myRequest)
+                    .then(function (response) {
+                        var contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json().then(function (json) {
+                                reallythis.items = json;
+                                let keys = [];
+                                if (json.length > 0) {
+                                    keys = Object.keys(json[0]);
+                                }
+                                // console.log("keys",keys);
+                                reallythis.columns = keys;
+                                let grid = reallythis.getItemsList();
+                                grid.columns = [];
+                            });
+                        } else {
+                            reallythis.showError('Verifique que esten correctos los datos.')
+                        }
+                    })
+                    .catch(function (error) {
+                        reallythis.showError("Se ha Producido un error Inesperado")
+                        return error;
+                    })
+            },
+            // attached: function () {
+            //     if (!this.session) {
+            //         if (this.lastLogin != "") {
+            //             this.$.username.value = this.lastLogin;
+            //             this.$.password.focus();
+            //         } else {
+            //             this.$.username.focus();
+            //         }
+            //     } else {
+            //         //this.$.session.destroy();
+            //         //window.location.href = 'aaa';
+            //     }
+            // },
+            showError: function (errorMessage) {
+                this.$.toastError.text = errorMessage;
+                this.$.toastError.fitInto = this.$.main;
+                this.$.toastError.open();
+            },
+            showMessage: function (message) {
+                this.$.toastOk.text = message;
+                this.$.toastOk.fitInto = this.$.main;
+                this.$.toastOk.open();
+            },
+            checkForEnterA: function (e) {
+                if (e.keyCode === 13) {
+                    this.$.password.focus();
+                }
+            },
+            checkForEnter: function (e) {
+                if (e.keyCode === 13) {
+                    this.onLogin();
+                }
+            },
+            _selectedItemChanged: function () {
+                console.log("hola");
+            },
+            getItemsList: function () {
+                // // console.log(this.$.itemsList);
+                return this.$.itemsList;
+            },
+            //VAADIN GRID
+            _isSelected: function (grid_page, item) {
+                return grid_page === item - 1;
+            },
+
+            _select: function (e) {
+                this.grid_page = e.model.item - 1;
+            },
+
+            _next: function () {
+                this.grid_page = Math.min(this.pages.length - 1, this.grid_page + 1);
+            },
+
+            _prev: function () {
+                this.grid_page = Math.max(0, this.grid_page - 1);
+            },
+
+            _itemsChanged: function (items, grid_page) {
+                // console.log("entro a items",items)
+                // if (!this.pages) {
+                this.pages = Array.apply(null, {
+                    length: Math.ceil(items.length / this.$.itemsList.pageSize)
+                }).map(function (item, index) {
+                    return index + 1;
+                });
+                // }
+
+                var start = grid_page * this.$.itemsList.pageSize;
+                var end = (grid_page + 1) * this.$.itemsList.pageSize;
+                this.$.itemsList.items = items.slice(start, end);
+            }
+            //VAADIN GRID CIERRA
+        });
+    </script>
+</dom-module>

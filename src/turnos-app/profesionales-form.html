@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
@@ -18,8 +19,10 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-box/app-box.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="./shared-style.html">
 <dom-module id="profesionales-form">
     <template>
+        <style include="shared-style"></style>
         <style is="custom-style">
             body {
                 margin: 0;
@@ -75,7 +78,8 @@
             paper-button.disabled {
                 color: white;
             }
-            #profesionalesButtons{
+
+            #profesionalesButtons {
                 margin-top: 10px;
                 text-align: right;
             }
@@ -85,13 +89,16 @@
             <div id="container">
                 <paper-input id="nombre" name="nombre" label="Nombres"></paper-input>
                 <paper-input id="apellido" name="apellido" label="Apellido"></paper-input>
-                <paper-input id="mail" name="mail" label="Email"></paper-input>
-                <paper-input id="tel" name="tel" label="Telefono"></paper-input>
+                <paper-input id="email" name="email" label="Email"></paper-input>
+                <paper-input id="telefono" name="telefono" label="Telefono"></paper-input>
                 <paper-input id="direccion" name="direccion" label="Dirección"></paper-input>
                 <div id="profesionalesButtons">
-                    <paper-button toggles raised class="indigo" id="cancelCliente">Cancelar</paper-button>
-                    <paper-button toggles raised class="green" id="addCliente">Aceptar</paper-button>
+                    <paper-button toggles raised class="indigo" id="cancelProfesional">Cancelar</paper-button>
+                    <paper-button toggles raised class="green" id="addProfesional">Aceptar</paper-button>
                 </div>
+                <paper-toast id="toastOk" text="" class="fit-bottom"></paper-toast>
+                <paper-toast id="toastError" text="" class="fit-bottom"></paper-toast>
+
             </div>
         </body>
     </template>
@@ -104,10 +111,14 @@
                 },
                 route: {
                     type: Object
+                },
+                token: {
+                    type: String
                 }
             },
+            behaviors: [URLServiceBehaviors.URLService],
             listeners: {
-                // 'close.tap': '_backMenu'
+                'addProfesional.tap': '_addProfesional'
                 // 'calendario.active-changed': '_activeItem',
                 // 'calendario.tap': '_Calendario'
             },
@@ -132,10 +143,30 @@
                 alert("aaa");
             },
             viewChanged: function (value) {
-                console.log(value)
+                if (typeof window.localStorage.session !== "undefined") {
+                    this.token = JSON.parse(window.localStorage.session).token;
+                }
             },
             _backMenu: function () {
                 this.set('route.path', '/none');
+            },
+            _addProfesional: function () {
+                let reallythis = this;
+                let url = this.url_base + 'profesionales';
+                let profesional = {};
+                if (this.$.nombre.value != '' && this.$.apellido.value != '') {
+                    profesional.nombres = this.$.nombre.value;
+                    profesional.apellido = this.$.apellido.value;
+                    profesional.email = this.$.email.value;
+                    profesional.telefono = this.$.telefono.value;
+                    profesional.direccion = this.$.direccion.value;
+                    profesional.access_token = this.token
+                    //
+                    this.fetchForm(url, profesional);
+                    //
+                } else {
+                    this.showError("Ingrese un Nombre y un Apellido");
+                }
             }
         });
     </script>

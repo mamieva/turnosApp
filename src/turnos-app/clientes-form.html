@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
@@ -19,8 +20,10 @@
 <link rel="import" href="../../bower_components/app-layout/app-box/app-box.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="./url-services-behavior.html">
+<link rel="import" href="./shared-style.html">
 <dom-module id="clientes-form">
     <template>
+        <style include="shared-style"></style>
         <style is="custom-style">
             body {
                 margin: 0;
@@ -96,6 +99,9 @@
                 </div>
 
 
+                <paper-toast id="toastOk" text="" class="fit-bottom"></paper-toast>
+                <paper-toast id="toastError" text="" class="fit-bottom"></paper-toast>
+
             </div>
         </body>
     </template>
@@ -150,38 +156,22 @@
                 this.set('route.path', '/none');
             },
             _addCliente: function () {
+                let reallythis = this;
+                let url = this.url_base + 'clientes';
                 let cliente = {};
-                cliente.nombres = this.$.nombre.value;
-                cliente.apellido = this.$.apellido.value;
-                cliente.email = this.$.email.value;
-                cliente.telefono = this.$.telefono.value;
-                cliente.direccion = this.$.direccion.value;
-                cliente.access_token = this.token;
-                //
-                let myHeaders = new Headers({
-                    'Content-type': 'application/json'
-                });
-                let body = {
-                    access_token: 'sLNFbyjirHK3S6tptg5Wppt7tQbLdBQB'
-                };
-                let myInit = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body: JSON.stringify(cliente),
-                    mode: 'cors',
-                    cache: 'default'
-                };
-
-                let myUrl = this.url_base + 'clientes';
-                let myRequest = new Request(myUrl, myInit);
-                fetch(myRequest)
-                    .then(function (response) {
-                        console.log(response);
-                        return response;
-                    })
-                    .then(function (result) {
-                        console.log(result);
-                    })
+                if (this.$.nombre.value != '' && this.$.apellido.value != '') {
+                    cliente.nombres = this.$.nombre.value;
+                    cliente.apellido = this.$.apellido.value;
+                    cliente.email = this.$.email.value;
+                    cliente.telefono = this.$.telefono.value;
+                    cliente.direccion = this.$.direccion.value;
+                    cliente.access_token = this.token
+                    //
+                    this.fetchForm(url,cliente);
+                    //
+                } else {
+                    this.showError("Ingrese un Nombre y un Apellido");
+                }
             }
 
         });

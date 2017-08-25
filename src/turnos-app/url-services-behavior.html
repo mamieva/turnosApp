@@ -6,10 +6,53 @@
         URLServiceBehaviors.URLService = {
             properties: {
                 url_base: {
-                    type: String
-                    ,value: 'http://localhost:9000/'
+                    type: String,
+                    value: 'http://localhost:9000/'
                     // ,value: 'https://evening-everglades-35253.herokuapp.com/'
                 }
+            },
+            showError: function (errorMessage) {
+                this.$.toastError.text = errorMessage;
+                this.$.toastError.fitInto = this.$.container;
+                this.$.toastError.open();
+            },
+            showMessage: function (message) {
+                this.$.toastOk.text = message;
+                this.$.toastOk.fitInto = this.$.container;
+                this.$.toastOk.open();
+            },
+            fetchForm: function (url, data) {
+                let reallythis = this;
+                let myHeaders = new Headers({
+                    'Content-type': 'application/json'
+                });
+                let myInit = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: JSON.stringify(data),
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                let myUrl = url; //this.url_base + 'clientes';
+                let myRequest = new Request(myUrl, myInit);
+                fetch(myRequest)
+                    .then(function (response) {
+                        // console.log(response);
+                        return response;
+                    })
+                    .then(function (result) {
+                        if (result.status != '400' || result.status != '404') {
+                            reallythis.showMessage("Se ha creado con Éxito")
+                        } else {
+                            reallythis.showError("Verifique los Datos Ingresados");
+                        }
+                        return result;
+                    })
+                    .catch(function (error) {
+                        reallythis.showError("Se ha Producido un error Inesperado")
+                        return error;
+                    })
             }
         }
     })();

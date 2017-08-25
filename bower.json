@@ -21,11 +21,13 @@
     "paper-progress": "PolymerElements/paper-progress#^2.0.1",
     "app-datepicker": "^2.11.0",
     "paper-time-input": "ryanburns23/paper-time-input#^2.0.3",
-    "vaadin-grid": "vaadin/vaadin-grid#^3.0.0",
+    "vaadin-grid": "vaadin/vaadin-grid#^3.0.1",
     "paper-toast": "PolymerElements/paper-toast#^2.0.0",
     "gold-email-input": "PolymerElements/gold-email-input#^1.0.9",
     "app-storage": "PolymerElements/app-storage#^2.0.2",
-    "iron-form": "PolymerElements/iron-form#^2.0.0"
+    "iron-form": "PolymerElements/iron-form#^2.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^2.0.1",
+    "paper-autocomplete": "ellipticaljs/paper-autocomplete#^3.0.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
