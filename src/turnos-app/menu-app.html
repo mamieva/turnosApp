@@ -139,32 +139,32 @@
             }
         </style>
 
-        <body>
-            <!-- <app-location route="{{route}}" use-hash-as-path></app-location> -->
-            <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{subRoute}}">
-            </app-route>
-            <header>
-                <app-toolbar>
-                    <div main-title>GESTOR DE TURNOS</div>
-                </app-toolbar>
-                <app-box scroll-target="scrollingRegion" threshold="64">
-                    <ul role="navigation" class="nav">
-                        <li><a href="#/menu/calendario">Calendario</a></li>
-                        <li><a href="#/menu/clientes">Clientes</a></li>
-                        <li><a href="#/menu/profesionales">Profesionales</a></li>
-                        <li><a href="#/menu/categorias">Categorias</a></li>
-                    </ul>
-                </app-box>
-            </header>
-            <iron-lazy-pages attr-for-selected="name" selected="{{pageData.page}}" selected-attribute="selected">
-                <div class="none" name="none"></div>
-                <list-page name="{{pageData.page}}" route="{{subRoute}}" data="{{pageData.page}}"></list-page>
-                <!-- <calendario-app name="calendario" route="{{subRoute}}"></calendario-app> -->
-                <!-- <clientes-form name="clientes" route="{{subRoute}}"></clientes-form> -->
-                <!-- <profesionales-form name="profesionales" route="{{subRoute}}"></profesionales-form> -->
-                <!-- <categorias-form name="categorias" route="{{subRoute}}"></categorias-form> -->
-            </iron-lazy-pages>
-        </body>
+
+        <!-- <app-location route="{{route}}" use-hash-as-path></app-location> -->
+        <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{subRoute}}">
+        </app-route>
+        <header>
+            <app-toolbar>
+                <div main-title="">GESTOR DE TURNOS</div>
+            </app-toolbar>
+            <app-box scroll-target="scrollingRegion" threshold="64">
+                <ul role="navigation" class="nav">
+                    <li><a href="#/menu/calendario">Calendario</a></li>
+                    <li><a href="#/menu/clientes">Clientes</a></li>
+                    <li><a href="#/menu/profesionales">Profesionales</a></li>
+                    <li><a href="#/menu/categorias">Categorias</a></li>
+                </ul>
+            </app-box>
+        </header>
+        <iron-lazy-pages attr-for-selected="name" selected="{{pageData.page}}" selected-attribute="selected">
+            <div class="none" name="none"></div>
+            <list-page name="{{pageData.page}}" route="{{subRoute}}" data="{{pageData.page}}"></list-page>
+            <!-- <calendario-app name="calendario" route="{{subRoute}}"></calendario-app> -->
+            <!-- <clientes-form name="clientes" route="{{subRoute}}"></clientes-form> -->
+            <!-- <profesionales-form name="profesionales" route="{{subRoute}}"></profesionales-form> -->
+            <!-- <categorias-form name="categorias" route="{{subRoute}}"></categorias-form> -->
+        </iron-lazy-pages>
+
     </template>
     <script>
         Polymer({
@@ -202,8 +202,14 @@
                 this.set("route.path", "/menu")
                 alert("aaa");
             },
-            viewChanged: function (value) {
-                console.log(value)
+            viewChanged: function (path) {
+                console.log(path)
+                // if (path == '' && !this.session) {
+                //     console.log('entra no se por que');
+                //     this.set('route.path', '/login');
+                // } else if (path == '') {
+                //     this.set('route.path', '/calendario');
+                // }
             },
             _backMenu: function () {
                 this.set('route.path', '/none');

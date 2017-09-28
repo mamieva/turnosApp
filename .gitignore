@@ -1,0 +1,8 @@
+bower_components/*
+!bower_components/paper-autocomplete
+!bower_components/moment-element
+build/
+node_modules/
+npm-debug.log
+!bower_components/paper-autocomplete
+node_modules/

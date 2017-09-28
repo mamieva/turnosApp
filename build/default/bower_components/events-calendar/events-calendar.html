@@ -121,7 +121,7 @@
                 dayLabels: {
                     type: Array,
                     value: function () {
-                        return ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+                        return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                     }
                 },
 
@@ -225,7 +225,6 @@
 
             // handle the selected day
             _handlerChosen: function (e) {
-                console.log("evento",e)
                 var self = this;
                 var selection = Polymer.dom(this.$.mpCalendar).querySelector('.selected');
                 if (selection) {

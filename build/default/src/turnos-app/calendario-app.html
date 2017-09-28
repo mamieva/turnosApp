@@ -1,0 +1,509 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/events-calendar/events-calendar.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-time-picker/paper-time-picker.html">
+<link rel="import" href="../../bower_components/paper-time-input/paper-time-input.html">
+<link rel="import" href="../../bower_components/paper-date-picker-item/paper-date-picker-item.html">
+<link rel="import" href="../../bower_components/paper-date-picker-item/paper-datetime-picker-item.html">
+<link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
+<link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete-suggestions.html">
+<script src="../../bower_components/moment/min/moment.min.js"></script>
+<script src="../../bower_components/sugar/dist/sugar.min.js"></script>
+<script src="../../bower_components/sugar/dist/locales/es.js"></script>
+<script src="../../bower_components/moment/locale/es.js"></script>
+<!-- <link rel="import" href="./shared-style.html"> -->
+<link rel="import" href="./url-services-behavior.html">
+<dom-module id="calendario-app">
+  <template>
+    <!-- <style include="shared-style"></style> -->
+    <style>
+       :host {
+        display: block;
+      }
+
+      paper-button {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-weight: normal;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      paper-button.pink {
+        color: var(--paper-pink-a200);
+        --paper-button-ink-color: var(--paper-pink-a200);
+      }
+
+      paper-button.pink:hover {
+        background-color: var(--paper-pink-100);
+      }
+
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        }
+        ;
+      }
+
+      paper-button.indigo:hover {
+        background-color: var(--paper-indigo-400);
+      }
+
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+
+      paper-button.green[active] {
+        background-color: var(--paper-red-500);
+      }
+
+      paper-button.disabled {
+        color: white;
+      }
+
+      .container {
+        text-align: center;
+      }
+      /* paper-dialog{
+        width: 100%
+      } */
+
+      .datepicker {
+        width: 50%;
+      }
+
+      paper-time-input {
+        vertical-align: top;
+        display: inline-block;
+        width: 25%;
+      }
+
+      vaadin-date-picker {
+        width: 100%;
+        display: inline-block;
+        margin: 0 auto;
+        /* float: left;   */
+      }
+
+      paper-dialog {
+        width: 100%;
+      }
+
+      paper-dropdown-menu {
+        margin: 1px;
+      }
+
+      paper-autocomplete {
+        display: inline-block;
+        width: 100%;
+        margin: 5px;
+      }
+
+      paper-time-input {
+        display: inline-block;
+      }
+
+      @media only screen and (min-width: 768px) {
+        paper-autocomplete {
+          display: inline-block;
+          width: 30%;
+          margin: 5px;
+        }
+        vaadin-date-picker {
+          width: 70%;
+          display: inline-block;
+          /* float: left;   */
+        }
+        paper-dialog {
+          width: 70%;
+        }
+      }
+    </style>
+
+    
+      <div id="container">
+        <paper-button toggles="" raised="" class="indigo" id="openTurno">Agregar Turno</paper-button>
+        <events-calendar id="calendar" day-labels="[&quot;Do&quot;,&quot;Lu&quot;,&quot;Ma&quot;,&quot;Mi&quot;,&quot;Ju&quot;,&quot;Vi&quot;,&quot;Sa&quot;]" show-days-in-month="35">
+        </events-calendar>
+        <paper-dialog id="dialogTurno" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop="">
+          <div class="container">
+
+            <vaadin-date-picker required="" label="Fecha del Turno" id="fecha_turno">
+            </vaadin-date-picker>
+
+            <paper-time-input required="" id="fecha_hora" format="12" am-pm="PM" label="Hora del Turno"></paper-time-input>
+
+            <paper-autocomplete required="" label="Cliente" id="clientes" name="clientes"></paper-autocomplete>
+            <paper-autocomplete required="" label="Profesional" id="profesionales" name="profesionales"></paper-autocomplete>
+            <paper-autocomplete required="" label="Categorias" id="categorias" name="categorias"></paper-autocomplete>
+
+          </div>
+          <div class="buttons">
+            <paper-button dialog-dismiss="">Cancelar</paper-button>
+            <paper-button autofocus="" id="addTurno">Agregar</paper-button>
+            <!-- dialog-confirm -->
+          </div>
+        </paper-dialog>
+      </div>
+      <paper-toast id="toastOk" text="" class="fit-bottom"></paper-toast>
+      <paper-toast id="toastError" text="" class="fit-bottom"></paper-toast>
+    
+  </template>
+  <script>
+    Polymer({
+
+      is: 'calendario-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'turnos-app',
+        },
+        time: {
+          type: String
+        },
+        eventList: {
+          type: Object,
+          value: {}
+        },
+        date: {
+          type: String
+        },
+        token: {
+          type: String
+        },
+        route: {
+          type: Object
+        },
+      },
+      behaviors: [URLServiceBehaviors.URLService],
+      listeners: {
+        // 'calendar.dateSelected': '_dateSelected',
+        'openTurno.tap': '_dialogTurno',
+        'addTurno.tap': '_addTurnos'
+
+      },
+      observers: [
+        'viewChanged(route.path)'
+      ],
+      _date: function (value) {
+        console.log(value)
+
+      },
+      viewChanged: function (path) {
+        // console.log('Paaath ---------',path);
+        if (typeof window.localStorage.session !== "undefined") {
+          this.token = JSON.parse(window.localStorage.session).token;
+        }
+        this._getTurnos();
+        this._getClientes();
+        this._getCategorias();
+        this._getProfesionales();
+
+      },
+      _updateDatepickerWoButtons: function () {
+        this.$.common.enforceDateChange();
+      },
+      _onSelectedDateChanged: function (ev) {
+        let really = this
+        var _value = ev.detail.value;
+        window.setTimeout(function () {
+          really.$.eInput.updateValueAndPreserveCaret(_value);
+        }, 1500);
+      },
+      ready: function () {
+        // Set locale
+        moment.locale('es');
+        // set vaadin
+        this.querySelector('vaadin-date-picker').i18n = {
+          monthNames: moment.months(),
+          weekdays: moment.weekdays(),
+          weekdaysShort: moment.weekdaysShort(),
+          firstDayOfWeek: moment.localeData().firstDayOfWeek(0),
+          week: 'Semana',
+          calendar: 'Calendario',
+          clear: 'Limpiar',
+          today: 'Hoy',
+          cancel: 'Cancelar',
+          formatDate: function (d) {
+            return moment(d).format(moment.localeData().longDateFormat('L'));
+          },
+          parseDate: function (s) {
+            return moment(s, moment.localeData().longDateFormat('L')).toDate();
+          },
+          formatTitle: function (monthName, fullYear) {
+            return monthName + ' ' + fullYear;
+          }
+        };
+        // this.$.datetime.cancelButton = 'Cancelar'
+        // this.$.datetime.okButton = 'Aceptar'
+        // this.$.calendar.addEventListener("date-selected", this._dialogTurno.bind(this))
+      },
+      _dialogTurno: function (e) {
+        this.$.dialogTurno.open();
+      },
+      _addTurnos: function () {
+        // this.$.dialogTurno.close();
+        if (this.$.fecha_turno.validate() & this.$.fecha_turno.validate() & this.$.fecha_hora.validate() &
+          this.$.clientes.validate() & this.$.profesionales.validate() & this.$.categorias.validate()) {
+          // console.log("object");
+          //Obtener los turnos actuales
+          let list = this.eventList;
+          let obj = {}
+          let fecha = moment.utc(this.$.fecha_turno.value).format('YYYY-MM-DD').toString();
+          obj.category = this.$.categorias.text;
+          obj.name = this.$.profesionales.text;
+          obj.summary = this.$.fecha_hora.value + ' - ' + this.$.clientes.text;
+          obj.slot = this.$.fecha_hora.value;
+          if (!list[fecha]) {
+            list[fecha] = new Array;
+          }
+          list[fecha].push(obj);
+          this.$.calendar.eventList = {}
+          this.$.calendar._onEventListChange({})
+          this.$.calendar.eventList = JSON.parse(JSON.stringify(list));
+          //
+          let reallythis = this;
+          let url = this.url_base + 'turnos';
+          let turno = {};
+          // if (this.$.nombre.value != '' && this.$.apellido.value != '') {
+          turno.nombre = 'adsa';
+          turno.descripcion = this.$.fecha_hora.value;
+          turno.categoria = this.$.categorias.value;
+          turno.cliente = this.$.clientes.value;
+          turno.profesional = this.$.profesionales.value;
+          turno.fecha = this.$.fecha_turno.value;
+          turno.access_token = this.token
+          //
+          this.fetchForm(url, turno);
+          // Cerrar dialog
+          this.$.dialogTurno.close();
+        }
+        //
+        // } else {
+        //   this.showError("Ingrese un Nombre y un Apellido");
+        // }
+      },
+      _addTurno: function () {
+        // this.$.common.enforceDateChange();
+        let fecha = this.$.fecha_turno.value;
+        // console.log(this.$.fecha_turno.value)
+        let list = this.eventList;
+        let obj = {};
+        obj.category = this.$.categoria.value;
+        obj.name = this.$.profesional.value;
+        obj.summary = this.$.cliente.value;
+        obj.slot = moment(fecha).format('L');
+
+        if (!list[fecha]) {
+          list[fecha] = new Array;
+        }
+        list[fecha].push(obj);
+        // console.log(list[fecha])
+
+        this.$.calendar.eventList = {}
+        this.$.calendar._onEventListChange({})
+        this.$.calendar.eventList = JSON.parse(JSON.stringify(list));
+        // console.log(JSON.stringify(this.$.calendar.eventList));
+
+      },
+      _addCliente: function () {
+        let fecha = moment(this.$.datetime.date).format('YYYY-MM-DD').toString();
+        let list = this.eventList;
+        let obj = {};
+        obj.category = this.$.categoria.value;
+        obj.name = this.$.profesional.value;
+        obj.summary = this.$.cliente.value;
+        obj.slot = moment(this.$.datetime.date).format('LT');
+
+        if (!list[fecha]) {
+          list[fecha] = new Array;
+        }
+        list[fecha].push(obj);
+        // console.log(list[fecha])
+
+        this.$.calendar.eventList = {}
+        this.$.calendar._onEventListChange({})
+        this.$.calendar.eventList = JSON.parse(JSON.stringify(list));
+        // console.log(JSON.stringify(this.$.calendar.eventList));
+      },
+      _getClientes: function () {
+        let reallythis = this;
+        // let headers = new Headers({
+        //   'x-access-token': this.token
+        // });
+        let init = {
+          method: 'GET',
+          // headers: headers,
+          mode: 'cors',
+          cache: 'default'
+        };
+
+        var myRequest = new Request(this.url_base + 'clientes?access_token=' + this.token, init);
+
+        fetch(myRequest)
+          .then(function (response) {
+            var contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json()
+            }
+          })
+          .then(function (result) {
+            // console.log(result);
+            reallythis.$.clientes.source = result.map(function (obj) {
+              return {
+                text: obj.nombres,
+                value: obj.id
+              }
+            })
+            // console.log(result);
+          })
+          .catch(function (err) {
+            console.log("error", err);
+          })
+
+      },
+      _getCategorias: function () {
+        let reallythis = this;
+        // let headers = new Headers({
+        //   'x-access-token': this.token
+        // });
+        let init = {
+          method: 'GET',
+          // headers: headers,
+          mode: 'cors',
+          cache: 'default'
+        };
+
+        var myRequest = new Request(this.url_base + 'categorias?access_token=' + this.token, init);
+
+        fetch(myRequest)
+          .then(function (response) {
+            var contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json()
+            }
+          })
+          .then(function (result) {
+            // console.log(result);
+            reallythis.$.categorias.source = result.map(function (obj) {
+              return {
+                text: obj.nombre,
+                value: obj.id
+              }
+            })
+            // console.log(result);
+          })
+          .catch(function (err) {
+            console.log("error", err);
+          })
+
+      },
+      _getProfesionales: function () {
+        let reallythis = this;
+        // let headers = new Headers({
+        //   'x-access-token': this.token
+        // });
+        let init = {
+          method: 'GET',
+          // headers: headers,
+          mode: 'cors',
+          cache: 'default'
+        };
+
+        var myRequest = new Request(this.url_base + 'profesionales?access_token=' + this.token, init);
+
+        fetch(myRequest)
+          .then(function (response) {
+            var contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json()
+            }
+          })
+          .then(function (result) {
+            // console.log(result);
+            reallythis.$.profesionales.source = result.map(function (obj) {
+              return {
+                text: obj.nombres,
+                value: obj.id
+              }
+            })
+            // console.log(result);
+          })
+          .catch(function (err) {
+            console.log("error", err);
+          })
+
+      },
+      _getTurnos: function () {
+        let reallythis = this;
+        reallythis.eventList = {};
+        let list = reallythis.eventList;
+        // let headers = new Headers({
+        //   'x-access-token': this.token
+        // });
+        let init = {
+          method: 'GET',
+          // headers: headers,
+          mode: 'cors',
+          cache: 'default'
+        };
+
+        var myRequest = new Request(this.url_base + 'turnos?access_token=' + this.token, init);
+
+        fetch(myRequest)
+          .then(function (response) {
+            var contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json()
+            }
+          })
+          .then(function (result) {
+            // console.log('turnos', result);
+            // let list = reallythis.eventList;
+            let arreglo = result.map(function (obj) {
+              let turno = {};
+              //
+              let fecha = moment.utc(obj.fecha).format('YYYY-MM-DD').toString();
+              turno.category = obj.categoria.nombre;
+              turno.name = obj.cliente.nombres;
+              turno.summary = obj.descripcion + ' - ' + obj.profesional.nombres + ' - ' + obj.categoria.nombre;
+              turno.slot = obj.descripcion; //moment(obj.fecha).format('LT');
+              //
+              if (!list[fecha]) {
+                list[fecha] = new Array;
+              }
+              list[fecha].push(turno);
+              //
+            })
+            reallythis.$.calendar.eventList = {};
+            reallythis.$.calendar._onEventListChange({});
+            reallythis.$.calendar.eventList = JSON.parse(JSON.stringify(list));
+            // console.log('listaaa', list);
+          })
+          .catch(function (err) {
+            console.log("error", err);
+          })
+      }
+
+
+    });
+  </script>
+</dom-module>

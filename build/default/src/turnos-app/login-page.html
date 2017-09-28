@@ -1,0 +1,153 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="./shared-style.html">
+<link rel="import" href="./url-services-behavior.html">
+
+<dom-module id="login-page">
+    <template>
+        <style include="shared-style"></style>
+        <style>
+            a {
+                color: #FF8A80;
+                cursor: pointer;
+            }
+            /*#toastError {
+            --paper-toast-background-color: #f63d33;
+            --paper-toast-color: white;
+        }*/
+
+            app-toolbar {
+                background-color: #4285f4;
+                color: #fff;
+            }
+        </style>
+        <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+        <div class="horizontal center-justified layout" id="container">
+            <div style="width:400px; margin:12px; height: 300px;" id="main">
+                <app-header class="flex">
+                    <app-toolbar>
+                        <div title=""> Bienvenidos! </div>
+                    </app-toolbar>
+                    <form is="iron-form" id="loginForm">
+                        <div class="layout vertical">
+                            <gold-email-input id="username" label="Usuario" required="" auto-validate="" on-keydown="checkForEnterA"></gold-email-input>
+                            <paper-input id="password" type="password" label="Constraseña" password="" required="" auto-validate="" on-keydown="checkForEnter"></paper-input>
+                        </div>
+                        <div>&nbsp;</div>
+                        <div class="layout horizontal bottom">
+                            <div class="flex"></div>
+                            <paper-button submit="" raised="" id="loginButton">Entrar</paper-button>
+                        </div>
+                    </form>
+                </app-header>
+            </div>
+        </div>
+        <paper-toast id="toastOk" text="" class="fit-bottom"></paper-toast>
+        <paper-toast id="toastError" text="" class="fit-bottom"></paper-toast>
+    </template>
+    <script>
+        Polymer({
+            is: "login-page",
+            properties: {
+                item: {
+                    type: Object,
+                },
+                title: {
+                    type: String,
+                    value: "Login"
+                },
+                lastLogin: {
+                    type: String,
+                    value: ""
+                },
+                session: {
+                    type: Object
+                }
+            },
+            behaviors: [URLServiceBehaviors.URLService],
+            listeners: {
+                'loginButton.tap': 'onLogin',
+            },
+            attached: function () {
+                if (!this.session) {
+                    if (this.lastLogin != "") {
+                        this.$.username.value = this.lastLogin;
+                        this.$.password.focus();
+                    } else {
+                        this.$.username.focus();
+                    }
+                } else {
+                    //this.$.session.destroy();
+                    //window.location.href = 'aaa';
+                }
+            },
+            showError: function (errorMessage) {
+                this.$.toastError.text = errorMessage;
+                this.$.toastError.fitInto = this.$.main;
+                this.$.toastError.open();
+            },
+            showMessage: function (message) {
+                this.$.toastOk.text = message;
+                this.$.toastOk.fitInto = this.$.main;
+                this.$.toastOk.open();
+            },
+            checkForEnterA: function (e) {
+                if (e.keyCode === 13) {
+                    this.$.password.focus();
+                }
+            },
+            checkForEnter: function (e) {
+                if (e.keyCode === 13) {
+                    this.onLogin();
+                }
+            },
+            onLogin: function () {
+                var reallythis = this;
+                var username = this.$.username.value;
+                var password = this.$.password.value;
+                var myHeaders = new Headers({
+                    'Content-type': 'application/json'
+                });
+                myHeaders.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+
+                var body = {
+                    access_token: 'sLNFbyjirHK3S6tptg5Wppt7tQbLdBQB'
+                }
+
+                var myInit = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: JSON.stringify(body),
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                let myUrl = this.url_base + 'auth';
+                var myRequest = new Request(myUrl, myInit);
+
+                fetch(myRequest)
+                    .then(function (response) {
+                        var contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json().then(function (json) {
+                                reallythis.session = json;
+                                reallythis.fire('login', reallythis.session);
+                                console.log(json)
+                            });
+                        }
+                        else{
+                            reallythis.showError('Verifique que esten correctos los datos.')
+                            reallythis.fire('unAuth');
+                        }
+                    })
+            }
+        });
+    </script>
+</dom-module>

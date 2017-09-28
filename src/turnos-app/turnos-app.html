@@ -91,18 +91,18 @@
       }
     </style>
 
-    <body>
-      <!-- Enrutador -->
-      <app-location route="{{route}}" use-hash-as-path></app-location>
-      <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{subRoute}}">
-      </app-route>
-      <app-localstorage-document id="session" key="session" data="{{session}}"> </app-localstorage-document>
-      <!-- /Enrutador  -->
-      <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{pageData.page}}">
-        <login-page id="login" name="login"></login-page>
-        <menu-app name="menu" route="{{subRoute}}"></menu-app>
-      </iron-lazy-pages>
-    </body>
+
+    <!-- Enrutador -->
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{subRoute}}">
+    </app-route>
+    <app-localstorage-document id="session" key="session" data="{{session}}"> </app-localstorage-document>
+    <!-- /Enrutador  -->
+    <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{pageData.page}}">
+      <login-page id="login" name="login"></login-page>
+      <menu-app name="menu" route="{{subRoute}}"></menu-app>
+    </iron-lazy-pages>
+
   </template>
   <script>
     Polymer({
@@ -127,22 +127,48 @@
         date: {
           type: String
         },
-        session:{
+        session: {
+          type: Object,
+          value: {}
+        },
+        pageData: {
           type: Object
+        },
+        page: {
+          type: String
         }
       },
       listeners: {
         'login': '_loginUser',
         'unAuth': '_unAuthorized'
       },
-      _loginUser: function(session){
+      observers: [
+        'viewChanged(route.path)'
+      ],
+      _loginUser: function (session) {
         this.session = {}
         this.session = session.detail;
-        console.log('session',session.detail);
+        console.log('session', session.detail);
         this.set('route.path', '/menu')
       },
-      _unAuthorized: function(){
+      _unAuthorized: function () {
         this.session = {}
+      },
+      viewChanged: function (path) {
+        console.log('route', this.pageData.page);
+        if (this.session) {
+          if (this.pageData.page == '') {
+            console.log('object');
+            this.set('route.path', '/login')
+          }
+        }
+        // if(path == '' && !this.session ){
+        //   this.set('route.path','/login');
+        // }
+        // else if(path == ''){
+        //   this.set('route.path','/calendario');
+        // }
+
       }
 
     });

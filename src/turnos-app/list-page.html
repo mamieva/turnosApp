@@ -106,6 +106,9 @@
                 route: {
                     type: Object
                 },
+                pageData: {
+                    type: Object
+                },
                 data: {
                     type: String
                 }
@@ -130,7 +133,7 @@
                     this._getData(this.data);
                 } else {
                     this.$.neon_pages.selected = 1;
-                    this.set('route.path', '/')
+                    this.set('route.path', '')
                 }
 
             },

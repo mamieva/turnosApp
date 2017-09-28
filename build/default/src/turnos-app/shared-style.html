@@ -1,0 +1,86 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<dom-module id="shared-style">
+    <template>
+        <style>
+             :host {
+                display: block;
+                margin: 0;
+                font-family: 'Roboto', 'Noto', sans-serif;
+                background-color: #eee;
+            }
+
+            .container {
+                display: block;
+                margin: 20px 0 0 20px;
+                width: 100%;
+            }
+
+            .form {
+                width: 90%;
+            }
+
+            paper-input {
+                display: block;
+                width: 100%;
+                margin: auto;
+            }
+
+            iron-icon,
+            div[suffix] {
+                color: hsl(0, 0%, 50%);
+                margin-right: 12px;
+            }
+
+            #toastError {
+                --paper-toast-background-color: #b2132b;
+                --paper-toast-color: white;
+            }
+
+            #toastOk {
+                --paper-toast-background-color: #488748;
+                --paper-toast-color: white;
+            }
+
+            paper-dialog {
+                margin: 0 auto;
+                /*width: 50%;
+                height: 50%*/
+            }
+
+            paper-card {
+                width: 100%;
+            }
+
+            paper-button {
+                vertical-align: bottom;
+                /*width: 20%;*/
+                font-family: 'Roboto', 'Noto', sans-serif;
+                font-weight: normal;
+                font-size: 14px;
+                -webkit-font-smoothing: antialiased;
+                background-color: var(--paper-indigo-500);
+                color: white;
+                text-align: center;
+                --paper-button-raised-keyboard-focus: {
+                    background-color: var(--paper-pink-a200) !important;
+                    color: white !important;
+                }
+                ;
+            }
+
+            vaadin-grid {
+                height: auto;
+                margin-top: 20px;
+            }
+        </style>
+    </template>
+</dom-module>
