@@ -63,10 +63,10 @@
             </div>
             <div>
                 <iron-lazy-pages attr-for-selected="name" selected="{{data}}" selected-attribute="selected">
-                    <calendario-app name="calendario" route="{{subRoute}}"></calendario-app>
-                    <clientes-form name="clientes" route="{{subRoute}}"></clientes-form>
-                    <profesionales-form name="profesionales" route="{{subRoute}}"></profesionales-form>
-                    <categorias-form name="categorias" route="{{subRoute}}"></categorias-form>
+                    <calendario-app name="calendario" route="{{route}}"></calendario-app>
+                    <clientes-form name="clientes" route="{{route}}"></clientes-form>
+                    <profesionales-form name="profesionales" route="{{route}}"></profesionales-form>
+                    <categorias-form name="categorias" route="{{route}}"></categorias-form>
                 </iron-lazy-pages>
             </div>
         </neon-animated-pages>
@@ -101,6 +101,7 @@
                     type: Array
                 },
                 selectedItems: {
+                    value:[],
                     observer: "_selectedItemChanged"
                 },
                 route: {
@@ -133,7 +134,7 @@
                     this._getData(this.data);
                 } else {
                     this.$.neon_pages.selected = 1;
-                    this.set('route.path', '')
+                    // this.set('route.path', '')
                 }
 
             },
@@ -208,8 +209,10 @@
                     this.onLogin();
                 }
             },
-            _selectedItemChanged: function () {
+            _selectedItemChanged: function (ev) {
+                console.log(ev);
                 console.log("hola");
+                this.set('route.path','/' + ev.id);
             },
             getItemsList: function () {
                 // // console.log(this.$.itemsList);

@@ -86,6 +86,9 @@
             }
         </style>
 
+        <app-route route="{{route}}" pattern="/:id" data="{{pageData}}" tail="{{subRoute}}">
+        </app-route>
+
         <body>
             <div id="container">
                 <paper-input id="nombre" name="nombre" label="Nombres"></paper-input>
@@ -150,14 +153,18 @@
                 if (typeof window.localStorage.session !== "undefined") {
                     this.token = JSON.parse(window.localStorage.session).token;
                 }
-                console.log(this.token)
+                if (this.pageData.id) {
+                    this._getCliente(this.pageData.id);
+                }
+                console.log(this.pageData.id)
             },
             _backMenu: function () {
                 this.set('route.path', '/none');
             },
             _addCliente: function () {
                 let reallythis = this;
-                let url = this.url_base + 'clientes';
+                let url = this.pageData.id ? this.url_base + 'clientes/'+ this.pageData.id : this.url_base + 'clientes';
+                let method = this.pageData.id ? 'PUT': 'POST';
                 let cliente = {};
                 if (this.$.nombre.value != '' && this.$.apellido.value != '') {
                     cliente.nombres = this.$.nombre.value;
@@ -167,11 +174,60 @@
                     cliente.direccion = this.$.direccion.value;
                     cliente.access_token = this.token
                     //
-                    this.fetchForm(url,cliente);
+                    this.fetchForm(url, cliente,method);
                     //
                 } else {
                     this.showError("Ingrese un Nombre y un Apellido");
                 }
+            },
+            _getCliente: function (id) {
+                let reallythis = this;
+                let myHeaders = new Headers({
+                    'Content-type': 'application/json'
+                });
+                let myInit = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                let myUrl = this.url_base + 'clientes/' + id + '?access_token=' + this.token;
+                let myRequest = new Request(myUrl, myInit);
+                fetch(myRequest)
+                    .then(function (response) {
+                        var contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            // console.log(response.json());
+                            response.json().then(function(obj){
+                                console.log(obj);
+                                reallythis.$.nombre.value = obj.nombres
+                                reallythis.$.apellido.value = obj.apellido
+                                reallythis.$.email.value = obj.email
+                                reallythis.$.telefono.value = obj.telefono
+                                reallythis.$.direccion.value = obj.direccion
+                            })
+                            // return response.json().then(function (json) {
+                            //     reallythis.items = json;
+                            //     let keys = [];
+                            //     if (json.length > 0) {
+                            //         keys = Object.keys(json[0]);
+                            //     }
+                            //     // console.log("keys",keys);
+                            //     reallythis.columns = keys;
+                            //     let grid = reallythis.getItemsList();
+                            //     grid.columns = [];
+                            // });
+                        } else {
+                            reallythis.showError('Verifique que esten correctos los datos.')
+                        }
+                    })
+                    .catch(function (error) {
+                        reallythis.showError("Se ha Producido un error Inesperado")
+                        return error;
+                    })
+
+
             }
 
         });

@@ -292,7 +292,7 @@
           turno.fecha = this.$.fecha_turno.value;
           turno.access_token = this.token
           //
-          this.fetchForm(url, turno);
+          this.fetchForm(url, turno,'POST');
           // Cerrar dialog
           this.$.dialogTurno.close();
         }

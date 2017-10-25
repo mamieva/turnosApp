@@ -148,7 +148,7 @@
                     categoria.descripcion = this.$.descripcion.value;
                     categoria.access_token = this.token
                     //
-                    this.fetchForm(url, categoria);
+                    this.fetchForm(url, categoria,'POST');
                     //
                 } else {
                     this.showError("Ingrese un Nombre");

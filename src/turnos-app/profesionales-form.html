@@ -162,7 +162,7 @@
                     profesional.direccion = this.$.direccion.value;
                     profesional.access_token = this.token
                     //
-                    this.fetchForm(url, profesional);
+                    this.fetchForm(url, profesional,'POST');
                     //
                 } else {
                     this.showError("Ingrese un Nombre y un Apellido");

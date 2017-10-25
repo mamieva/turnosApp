@@ -21,13 +21,13 @@
                 this.$.toastOk.fitInto = this.$.container;
                 this.$.toastOk.open();
             },
-            fetchForm: function (url, data) {
+            fetchForm: function (url, data,method) {
                 let reallythis = this;
                 let myHeaders = new Headers({
                     'Content-type': 'application/json'
                 });
                 let myInit = {
-                    method: 'POST',
+                    method: method,
                     headers: myHeaders,
                     body: JSON.stringify(data),
                     mode: 'cors',
